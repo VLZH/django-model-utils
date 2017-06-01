@@ -90,6 +90,12 @@ class InheritanceQuerySetMixin(object):
         new_qs.subclasses = subclasses
         return new_qs
 
+    def _fetch_all(self):
+        if self._result_cache is None:
+            self._result_cache = list(self.iterator())
+        if self._prefetch_related_lookups and not self._prefetch_done:
+            self._prefetch_related_objects()
+
     def _clone(self, klass=None, setup=False, **kwargs):
         for name in ['subclasses', '_annotated']:
             if hasattr(self, name):
